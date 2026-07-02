@@ -1,9 +1,10 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useAppStore } from "../../stores/appStore";
 import { useUIStore } from "../../stores/useUIStore";
 import type { Note } from "../../types";
+import { ActionIcon, Button, Group, Paper, Text, Tooltip } from "@mantine/core";
 import { Plus, Pin, Trash2, Archive, ChevronUp, ChevronDown } from "lucide-react";
 import CategoryFilter from "../tags/CategoryFilter";
 import ArchiveToggle from "./ArchiveToggle";
@@ -77,14 +78,16 @@ export default function NoteList() {
   return (
     <div className="note-list">
       <ArchiveToggle />
-      <div className="note-list-header">
-        <span className="note-count">{showArchived ? t("notes.archivedCount", { count: sorted.length }) : t("notes.count", { count: sorted.length })}</span>
-        <button className="note-new-btn" onClick={handleNew} title={t("notes.newNote")}>
+      <Group justify="space-between" mb="xs" mt="xs">
+        <Text size="sm" c="dimmed">
+          {showArchived ? t("notes.archivedCount", { count: sorted.length }) : t("notes.count", { count: sorted.length })}
+        </Text>
+        <ActionIcon variant="subtle" size="sm" onClick={handleNew} title={t("notes.newNote")}>
           <Plus size={16} />
-        </button>
-      </div>
+        </ActionIcon>
+      </Group>
       <CategoryFilter />
-      <div className="note-list-items" ref={parentRef}>
+      <div className="note-list-items" ref={parentRef} style={{ flex: 1, overflow: 'auto' }}>
         <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
           {virtualizer.getVirtualItems().map((vItem) => {
             const note = sorted[vItem.index];
@@ -92,7 +95,8 @@ export default function NoteList() {
               <div key={note.id} style={{
                 position: 'absolute', top: 0, left: 0, width: '100%',
                 height: `${vItem.size}px`,
-                transform: `translateY(${vItem.start}px)`
+                transform: `translateY(${vItem.start}px)`,
+                padding: '2px 0'
               }}>
                 <NoteListItem
                   note={note}
@@ -128,23 +132,46 @@ function NoteListItem({
   const text = line.slice(0, 60) || t("notes.empty");
 
   return (
-    <div className={`note-item ${note.pinned ? "pinned" : ""} ${note.archived ? "archived" : ""}`}>
-      <div className="note-item-move">
-        <button className="note-item-move-btn" onClick={() => onMove(note.id, "up")} title="Move up"><ChevronUp size={10} /></button>
-        <button className="note-item-move-btn" onClick={() => onMove(note.id, "down")} title="Move down"><ChevronDown size={10} /></button>
+    <Paper
+      p={4}
+      withBorder
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        opacity: note.archived ? 0.6 : 1,
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <ActionIcon variant="subtle" size="xs" onClick={() => onMove(note.id, "up")} title="Move up">
+          <ChevronUp size={10} />
+        </ActionIcon>
+        <ActionIcon variant="subtle" size="xs" onClick={() => onMove(note.id, "down")} title="Move down">
+          <ChevronDown size={10} />
+        </ActionIcon>
       </div>
-      <button className="note-item-main" onClick={togglePin}>
-        <Pin size={12} className={`pin-icon ${note.pinned ? "pinned" : ""}`} />
-        <span className="note-item-preview">{text}</span>
-      </button>
-      <div className="note-item-actions">
-        <button className="note-item-action-btn" onClick={() => onDelete(note.id)} title="Move to trash">
-          <Trash2 size={12} />
-        </button>
-        <button className="note-item-action-btn" onClick={() => onArchive(note.id)} title={showArchived ? "Unarchive" : "Archive"}>
-          <Archive size={12} />
-        </button>
-      </div>
-    </div>
+      <Button
+        variant="subtle"
+        size="sm"
+        onClick={togglePin}
+        fullWidth
+        style={{ justifyContent: 'flex-start' }}
+        leftSection={<Pin size={12} color={note.pinned ? 'var(--mantine-color-yellow-5)' : undefined} />}
+      >
+        <Text size="sm" truncate="end">{text}</Text>
+      </Button>
+      <Group gap={2}>
+        <Tooltip label="Move to trash">
+          <ActionIcon variant="subtle" size="sm" color="red" onClick={() => onDelete(note.id)}>
+            <Trash2 size={12} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label={showArchived ? "Unarchive" : "Archive"}>
+          <ActionIcon variant="subtle" size="sm" onClick={() => onArchive(note.id)}>
+            <Archive size={12} />
+          </ActionIcon>
+        </Tooltip>
+      </Group>
+    </Paper>
   );
 }

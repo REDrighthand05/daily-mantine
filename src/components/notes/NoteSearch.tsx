@@ -1,5 +1,6 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { useUIStore } from "../../stores/useUIStore";
+import { TextInput, ActionIcon } from "@mantine/core";
 import { Search, X } from "lucide-react";
 
 export default function NoteSearch() {
@@ -7,19 +8,17 @@ export default function NoteSearch() {
   const { searchQuery, setSearchQuery } = useUIStore();
 
   return (
-    <div className="search-bar">
-      <Search size={14} className="search-icon" />
-      <input
-        type="text"
-        placeholder={t("notes.search")}
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      {searchQuery && (
-        <button className="search-clear" onClick={() => setSearchQuery("")}>
+    <TextInput
+      placeholder={t("notes.search")}
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      leftSection={<Search size={14} />}
+      rightSection={searchQuery ? (
+        <ActionIcon variant="subtle" size="xs" onClick={() => setSearchQuery("")}>
           <X size={14} />
-        </button>
-      )}
-    </div>
+        </ActionIcon>
+      ) : null}
+      size="sm"
+    />
   );
 }

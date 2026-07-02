@@ -1,19 +1,16 @@
-import type { Note } from "../../types";
+﻿import type { Note } from "../../types";
 import type { ExportFormat } from "../../types";
 import { writeFile } from "../../bridge/ipc";
+import { Menu, ActionIcon } from "@mantine/core";
 import { Download } from "lucide-react";
 import { save } from "@tauri-apps/plugin-dialog";
-import { useState } from "react";
 
 interface Props {
   note: Note;
 }
 
 export default function ExportMenu({ note }: Props) {
-  const [open, setOpen] = useState(false);
-
   const handleExport = async (format: ExportFormat) => {
-    setOpen(false);
     const ext = format === "markdown" ? "md" : "txt";
     const defaultName = note.content.slice(0, 30).replace(/\s+/g, "_") || "note";
     try {
@@ -30,16 +27,16 @@ export default function ExportMenu({ note }: Props) {
   };
 
   return (
-    <div className="export-menu">
-      <button className="export-btn" onClick={() => setOpen(!open)} title="Export note">
-        <Download size={14} />
-      </button>
-      {open && (
-        <div className="export-dropdown">
-          <button onClick={() => handleExport("markdown")}>Export as Markdown</button>
-          <button onClick={() => handleExport("text")}>Export as Text</button>
-        </div>
-      )}
-    </div>
+    <Menu shadow="md" width={200}>
+      <Menu.Target>
+        <ActionIcon variant="subtle" size="sm" title="Export note">
+          <Download size={14} />
+        </ActionIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item onClick={() => handleExport("markdown")}>Export as Markdown</Menu.Item>
+        <Menu.Item onClick={() => handleExport("text")}>Export as Text</Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   );
 }

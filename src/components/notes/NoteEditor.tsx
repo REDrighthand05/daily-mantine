@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
 import { useUIStore } from "../../stores/useUIStore";
@@ -8,6 +8,7 @@ import TagPicker from "../tags/TagPicker";
 import EditorToolbar from "./EditorToolbar";
 import ExportMenu from "./ExportMenu";
 import MarkdownPreview from "./MarkdownPreview";
+import { Paper, Textarea, Button, Group, Text } from "@mantine/core";
 
 export default function NoteEditor() {
   const { t } = useTranslation();
@@ -31,9 +32,9 @@ export default function NoteEditor() {
 
   if (!editingNote) {
     return (
-      <div className="note-editor-empty">
-        <p>{t("notes.selectNote")}</p>
-      </div>
+      <Text c="dimmed" size="sm" ta="center" py="xl">
+        {t("notes.selectNote")}
+      </Text>
     );
   }
 
@@ -75,34 +76,37 @@ export default function NoteEditor() {
   const noteTags = tags.filter((t) => editingNote.tags.includes(t.id));
 
   return (
-    <div className="note-editor">
-      <div className="note-editor-header">
+    <Paper p="sm" withBorder style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Group gap={4} mb="xs">
         <ExportMenu note={editingNote} />
         {noteTags.map((tag) => (
           <TagChip key={tag.id} tag={tag} onRemove={() => handleTagToggle(tag.id)} />
         ))}
-        <button className="tag-picker-toggle" onClick={() => setShowTagPicker(!showTagPicker)}>
+        <Button variant="subtle" size="xs" onClick={() => setShowTagPicker(!showTagPicker)}>
           {showTagPicker ? t("common.done") : t("tags.addTags")}
-        </button>
-      </div>
+        </Button>
+      </Group>
       {showTagPicker && <TagPicker onToggle={handleTagToggle} />}
       <EditorToolbar mode={editorMode} onModeChange={setEditorMode} onInsert={handleInsert} />
-      <div className="note-editor-body">
+      <div className="note-editor-body" style={{ flex: 1, display: 'flex', gap: 4, marginTop: 4 }}>
         {editorMode !== "preview" && (
-          <textarea
+          <Textarea
             ref={textareaRef}
-            className={editorMode === "split" ? "split" : ""}
             value={editingNote.content}
             onChange={(e) => handleChange(e.target.value)}
             placeholder={t("notes.startTyping")}
-            autoFocus
+            autosize
+            minRows={8}
+            style={{ flex: editorMode === "split" ? 1 : 'none', width: editorMode === "split" ? '50%' : '100%' }}
+            styles={{ input: { height: '100%', minHeight: 200 } }}
           />
         )}
         {editorMode !== "edit" && (
-          <MarkdownPreview content={editingNote.content} />
+          <div style={{ flex: 1, overflow: 'auto', padding: 8 }}>
+            <MarkdownPreview content={editingNote.content} />
+          </div>
         )}
       </div>
-    </div>
+    </Paper>
   );
 }
-

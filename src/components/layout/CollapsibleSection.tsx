@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from "react";
+﻿import { useState, type ReactNode } from "react";
+import { Button } from "@mantine/core";
 import { ChevronDown } from "lucide-react";
 
 interface Props {
@@ -11,10 +12,16 @@ export default function CollapsibleSection({ title, defaultOpen = true, children
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="collapsible-section">
-      <button className="collapsible-header" onClick={() => setOpen(!open)}>
-        <span>{title}</span>
-        <ChevronDown size={14} className={`collapsible-chevron ${open ? "open" : ""}`} />
-      </button>
+      <Button
+        variant="subtle"
+        size="sm"
+        onClick={() => setOpen(!open)}
+        rightSection={<ChevronDown size={14} style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />}
+        fullWidth
+        style={{ justifyContent: 'space-between' }}
+      >
+        {title}
+      </Button>
       <div className={`collapsible-content ${open ? "open" : ""}`}>
         {children}
       </div>

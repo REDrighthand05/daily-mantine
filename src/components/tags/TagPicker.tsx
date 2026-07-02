@@ -1,7 +1,8 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import TagChip from "./TagChip";
 import { useAppStore } from "../../stores/appStore";
 import type { Tag } from "../../types";
+import { ActionIcon, Group, TextInput } from "@mantine/core";
 import { Plus } from "lucide-react";
 
 interface Props {
@@ -27,8 +28,8 @@ export default function TagPicker({ onToggle }: Props) {
   };
 
   return (
-    <div className="tag-picker">
-      <div className="tag-picker-chips">
+    <div>
+      <Group gap={4}>
         {tags.map((tag) => (
           <TagChip
             key={tag.id}
@@ -37,20 +38,20 @@ export default function TagPicker({ onToggle }: Props) {
             size="sm"
           />
         ))}
-        <button className="tag-add-btn" onClick={() => setShowAdd(!showAdd)} title="New tag">
+        <ActionIcon variant="subtle" size="sm" onClick={() => setShowAdd(!showAdd)} title="New tag">
           <Plus size={12} />
-        </button>
-      </div>
+        </ActionIcon>
+      </Group>
       {showAdd && (
-        <div className="tag-picker-input">
-          <input
-            autoFocus
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleAdd(); }}
-            placeholder="Tag name..."
-          />
-        </div>
+        <TextInput
+          autoFocus
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") handleAdd(); }}
+          placeholder="Tag name..."
+          size="xs"
+          mt={4}
+        />
       )}
     </div>
   );

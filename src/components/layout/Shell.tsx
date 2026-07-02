@@ -1,4 +1,4 @@
-import TitleBar from "./TitleBar";
+﻿import TitleBar from "./TitleBar";
 import NoteList from "../notes/NoteList";
 import NoteEditor from "../notes/NoteEditor";
 import NoteSearch from "../notes/NoteSearch";
@@ -11,6 +11,7 @@ import { useAppStore } from "../../stores/appStore";
 import { useUIStore } from "../../stores/useUIStore";
 import { useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
+import { Button, Paper } from "@mantine/core";
 import { FileText, Clipboard, Settings } from "lucide-react";
 
 export default function Shell() {
@@ -57,27 +58,42 @@ export default function Shell() {
         </div>
       )}
       {activeTab === "clipboard" && <ClipboardList />}
-      {activeTab === "settings" && <React.Suspense fallback={<div className="loading-panel">Loading...</div>}><SettingsPage /></React.Suspense>}
-      <div className="tab-bar">
-        <button
-          className={`tab-bar-btn ${activeTab === "notes" ? "active" : ""}`}
+      {activeTab === "settings" && <React.Suspense fallback={<Paper p="xl" ta="center">Loading...</Paper>}><SettingsPage /></React.Suspense>}
+      <Paper
+        withBorder
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 4,
+          padding: 4,
+          borderTop: '1px solid var(--mantine-color-dark-4)',
+        }}
+      >
+        <Button
+          variant={activeTab === "notes" ? "light" : "subtle"}
+          size="sm"
           onClick={() => setActiveTab("notes")}
+          leftSection={<FileText size={14} />}
         >
-          <FileText size={14} /> {t("tabs.notes")}
-        </button>
-        <button
-          className={`tab-bar-btn ${activeTab === "clipboard" ? "active" : ""}`}
+          {t("tabs.notes")}
+        </Button>
+        <Button
+          variant={activeTab === "clipboard" ? "light" : "subtle"}
+          size="sm"
           onClick={() => setActiveTab("clipboard")}
+          leftSection={<Clipboard size={14} />}
         >
-          <Clipboard size={14} /> {t("tabs.clipboard")}
-        </button>
-        <button
-          className={`tab-bar-btn ${activeTab === "settings" ? "active" : ""}`}
+          {t("tabs.clipboard")}
+        </Button>
+        <Button
+          variant={activeTab === "settings" ? "light" : "subtle"}
+          size="sm"
           onClick={() => setActiveTab("settings")}
+          leftSection={<Settings size={14} />}
         >
-          <Settings size={14} /> {t("tabs.settings")}
-        </button>
-      </div>
+          {t("tabs.settings")}
+        </Button>
+      </Paper>
     </div>
   );
 }

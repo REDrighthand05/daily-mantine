@@ -1,7 +1,7 @@
-import type { ClipboardEntry as CEntry } from "../../types";
+﻿import type { ClipboardEntry as CEntry } from "../../types";
 import { Star, Trash2, Clipboard } from "lucide-react";
 import { writeClipboard } from "../../bridge/ipc";
-
+import { ActionIcon, Text, Paper } from "@mantine/core";
 
 interface Props {
   entry: CEntry;
@@ -20,26 +20,30 @@ export default function ClipboardEntryComponent({ entry, onDelete, onStar, onCli
   const time = new Date(entry.created_at).toLocaleTimeString();
 
   return (
-    <div className="cb-entry" onClick={() => onClick(entry)}>
-      <div className="cb-entry-top">
-        <span className="cb-entry-text">{preview}{entry.content.length > 80 ? "..." : ""}</span>
-        <div className="cb-entry-actions">
-          <button className="cb-action-btn" onClick={(e) => { e.stopPropagation(); handleCopy(); }} title="Copy">
+    <Paper p="xs" withBorder style={{ cursor: 'pointer' }} onClick={() => onClick(entry)}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text size="sm" truncate="end" style={{ flex: 1 }}>
+          {preview}{entry.content.length > 80 ? "..." : ""}
+        </Text>
+        <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
+          <ActionIcon variant="subtle" size="sm" onClick={(e) => { e.stopPropagation(); handleCopy(); }} title="Copy">
             <Clipboard size={12} />
-          </button>
-          <button
-            className={`cb-action-btn ${entry.starred ? "starred" : ""}`}
+          </ActionIcon>
+          <ActionIcon
+            variant="subtle"
+            size="sm"
+            color={entry.starred ? "yellow" : "gray"}
             onClick={(e) => { e.stopPropagation(); onStar(entry.id, !entry.starred); }}
             title={entry.starred ? "Unstar" : "Star"}
           >
             <Star size={12} />
-          </button>
-          <button className="cb-action-btn" onClick={(e) => { e.stopPropagation(); onDelete(entry.id); }} title="Delete">
+          </ActionIcon>
+          <ActionIcon variant="subtle" size="sm" color="red" onClick={(e) => { e.stopPropagation(); onDelete(entry.id); }} title="Delete">
             <Trash2 size={12} />
-          </button>
+          </ActionIcon>
         </div>
       </div>
-      <div className="cb-entry-time">{time}</div>
-    </div>
+      <Text c="dimmed" size="xs">{time}</Text>
+    </Paper>
   );
 }

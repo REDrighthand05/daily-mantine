@@ -1,9 +1,10 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/appStore";
+import { Button, Group } from "@mantine/core";
 
 const LANGUAGES = [
   { code: "en-US", label: "English" },
-  { code: "zh-CN", label: "中文" },
+  { code: "zh-CN", label: "\u4e2d\u6587" },
 ];
 
 export default function LanguagePicker() {
@@ -16,16 +17,17 @@ export default function LanguagePicker() {
   };
 
   return (
-    <div className="settings-options">
+    <Group gap={4}>
       {LANGUAGES.map((lang) => (
-        <button
+        <Button
           key={lang.code}
-          className={`settings-option ${settings.language === lang.code ? "active" : ""}`}
+          variant={settings.language === lang.code ? "light" : "subtle"}
+          size="sm"
           onClick={() => handleChange(lang.code)}
         >
-          <span>{lang.label}</span>
-        </button>
+          {lang.label}
+        </Button>
       ))}
-    </div>
+    </Group>
   );
 }

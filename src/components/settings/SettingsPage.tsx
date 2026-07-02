@@ -1,5 +1,6 @@
 ﻿import { useAppStore } from "../../stores/appStore";
 import type { AppSettings } from "../../types";
+import { Button, Checkbox, Group, Paper, Slider, Stack, Text, TextInput, Title } from "@mantine/core";
 import { Palette, AlignLeft, AlignRight } from "lucide-react";
 import ThemePicker from "../theme/ThemePicker";
 import { useState, useEffect } from "react";
@@ -45,96 +46,93 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="settings-page">
-      <h2>Settings</h2>
+    <Paper p="md" withBorder style={{ maxWidth: 600, margin: '0 auto' }}>
+      <Title order={3} mb="md">Settings</Title>
 
       <CollapsibleSection title={t("settings.appearance")}>
-        <h3>{t("settings.accentColor")}</h3>
+        <Text size="sm" fw={500} mt="xs">{t("settings.accentColor")}</Text>
         <ThemePicker
           accentColor={settings.accent_color}
           onChange={(color) => updateSettings({ accent_color: color })}
         />
 
-        <label className="settings-toggle">
-          <input
-            type="checkbox"
-            checked={settings.animations_enabled}
-            onChange={(e) => updateSettings({ animations_enabled: e.target.checked })}
-          />
-          <span>{t("settings.animations")}</span>
-        </label>
-        <h3>{t("settings.language")}</h3>
+        <Checkbox
+          mt="sm"
+          label={t("settings.animations")}
+          checked={settings.animations_enabled}
+          onChange={(e) => updateSettings({ animations_enabled: e.currentTarget.checked })}
+        />
+        <Text size="sm" fw={500} mt="sm">{t("settings.language")}</Text>
         <LanguagePicker />
       </CollapsibleSection>
 
       <CollapsibleSection title={t("settings.panel")}>
-        <h3>{t("settings.position")}</h3>
-        <div className="settings-options">
+        <Text size="sm" fw={500} mt="xs">{t("settings.position")}</Text>
+        <Group gap={4} mt="xs">
           {positions.map((p) => (
-            <button
+            <Button
               key={p.value}
-              className={`settings-option ${settings.panel_position === p.value ? "active" : ""}`}
+              variant={settings.panel_position === p.value ? "light" : "subtle"}
+              size="sm"
               onClick={() => updateSettings({ panel_position: p.value })}
+              leftSection={p.icon}
             >
-              {p.icon}
-              <span>{p.label}</span>
-            </button>
+              {p.label}
+            </Button>
           ))}
-        </div>
-        <h3>{t("settings.opacity")}</h3>
-        <div className="settings-slider">
-          <input
-            type="range"
-            min="30"
-            max="100"
-            value={Math.round(settings.opacity * 100)}
-            onChange={(e) =>
-              updateSettings({ opacity: parseInt(e.target.value) / 100 })
-            }
-          />
-          <span>{Math.round(settings.opacity * 100)}%</span>
+        </Group>
+        <div style={{ marginTop: 12 }}>
+          <Text size="sm" fw={500}>{t("settings.opacity")}</Text>
+          <Group gap="sm">
+            <Slider
+              min={30}
+              max={100}
+              value={Math.round(settings.opacity * 100)}
+              onChange={(v) => updateSettings({ opacity: v / 100 })}
+              style={{ flex: 1 }}
+            />
+            <Text size="sm">{Math.round(settings.opacity * 100)}%</Text>
+          </Group>
         </div>
       </CollapsibleSection>
 
-      <section>
-        <h3>{t("settings.autostart")}</h3>
-        <label className="settings-toggle">
-          <input
-            type="checkbox"
-            checked={settings.autostart}
-            onChange={(e) => updateSettings({ autostart: e.target.checked })}
-          />
-          <span>{t("settings.startWithWindows")}</span>
-        </label>
-      </section>
+      <div style={{ marginTop: 12 }}>
+        <Text size="sm" fw={500}>{t("settings.autostart")}</Text>
+        <Checkbox
+          label={t("settings.startWithWindows")}
+          checked={settings.autostart}
+          onChange={(e) => updateSettings({ autostart: e.currentTarget.checked })}
+        />
+      </div>
 
-      <section>
-        <h3>{t("settings.shortcut")}</h3>
-        <input
-          className="settings-shortcut"
-          type="text"
+      <div style={{ marginTop: 12 }}>
+        <Text size="sm" fw={500}>{t("settings.shortcut")}</Text>
+        <TextInput
           value={settings.shortcut_toggle}
           readOnly
           placeholder="Alt+Space"
+          size="sm"
+          mt={4}
         />
-      </section>
-          <section>
-        <h3>Diagnostics</h3>
-        <div className="diagnostics-info">
-          <p>OS: {sysInfo?.os} ({sysInfo?.arch})</p>
-          <p>App: v{sysInfo?.app_version}</p>
-          <button className="settings-action-btn" onClick={handleReportIssue}>Report Issue</button>
-        </div>
-      </section>
+      </div>
 
-      <section>
-        <h3>Data</h3>
-        <div className="settings-actions">
-          <button className="settings-action-btn" onClick={handleExport}>Export Backup</button>
-          <button className="settings-action-btn" onClick={handleImport}>Import Backup</button>
-          <button className="settings-action-btn danger" onClick={handleReset}>Factory Reset</button>
-        </div>
-      </section>
-    </div>
+      <div style={{ marginTop: 12 }}>
+        <Text size="sm" fw={500}>Diagnostics</Text>
+        <Stack gap={4} mt={4}>
+          <Text size="xs" c="dimmed">OS: {sysInfo?.os} ({sysInfo?.arch})</Text>
+          <Text size="xs" c="dimmed">App: v{sysInfo?.app_version}</Text>
+          <Button variant="subtle" size="xs" onClick={handleReportIssue}>Report Issue</Button>
+        </Stack>
+      </div>
+
+      <div style={{ marginTop: 12 }}>
+        <Text size="sm" fw={500}>Data</Text>
+        <Group gap={4} mt={4}>
+          <Button variant="subtle" size="xs" onClick={handleExport}>Export Backup</Button>
+          <Button variant="subtle" size="xs" onClick={handleImport}>Import Backup</Button>
+          <Button variant="subtle" size="xs" color="red" onClick={handleReset}>Factory Reset</Button>
+        </Group>
+      </div>
+    </Paper>
   );
 }

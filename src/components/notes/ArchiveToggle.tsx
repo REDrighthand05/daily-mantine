@@ -1,5 +1,6 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { useUIStore } from "../../stores/useUIStore";
+import { Button, Group } from "@mantine/core";
 import { Archive, Trash2, FileText } from "lucide-react";
 
 export default function ArchiveToggle() {
@@ -9,28 +10,34 @@ export default function ArchiveToggle() {
   const mode = showDeleted ? "trash" : showArchived ? "archive" : "active";
 
   return (
-    <div className="archive-toggle">
-      <button
-        className={`archive-toggle-btn ${mode === "active" ? "active" : ""}`}
+    <Group gap={4}>
+      <Button
+        variant={mode === "active" ? "light" : "subtle"}
+        size="sm"
         onClick={() => { setShowDeleted(false); setShowArchived(false); }}
         title={t("notes.active")}
+        leftSection={<FileText size={12} />}
       >
-        <FileText size={12} /> {t("notes.active")}
-      </button>
-      <button
-        className={`archive-toggle-btn ${mode === "archive" ? "active" : ""}`}
+        {t("notes.active")}
+      </Button>
+      <Button
+        variant={mode === "archive" ? "light" : "subtle"}
+        size="sm"
         onClick={() => setShowArchived(true)}
         title={t("notes.archived")}
+        leftSection={<Archive size={12} />}
       >
-        <Archive size={12} /> {t("notes.archived")}
-      </button>
-      <button
-        className={`archive-toggle-btn ${mode === "trash" ? "active" : ""}`}
+        {t("notes.archived")}
+      </Button>
+      <Button
+        variant={mode === "trash" ? "light" : "subtle"}
+        size="sm"
         onClick={() => setShowDeleted(true)}
         title={t("notes.trash")}
+        leftSection={<Trash2 size={12} />}
       >
-        <Trash2 size={12} /> {t("notes.trash")}
-      </button>
-    </div>
+        {t("notes.trash")}
+      </Button>
+    </Group>
   );
 }

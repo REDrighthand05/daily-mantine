@@ -1,4 +1,5 @@
 ﻿import { Component, type ReactNode } from "react";
+import { Button, Paper, Title, Text } from "@mantine/core";
 
 interface Props { children: ReactNode; }
 interface State { hasError: boolean; error: Error | null; }
@@ -17,16 +18,15 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary">
-          <h2>Something went wrong</h2>
-          <p>{this.state.error?.message}</p>
-          <button onClick={() => { this.setState({ hasError: false }); }}>
+        <Paper p="xl" withBorder style={{ maxWidth: 500, margin: '100px auto', textAlign: 'center' }}>
+          <Title order={2}>Something went wrong</Title>
+          <Text c="dimmed" size="sm" mt="sm">{this.state.error?.message}</Text>
+          <Button mt="md" onClick={() => { this.setState({ hasError: false }); }}>
             Reload
-          </button>
-        </div>
+          </Button>
+        </Paper>
       );
     }
     return this.props.children;
   }
 }
-

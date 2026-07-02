@@ -1,4 +1,5 @@
-import type { EditorMode } from "../../types";
+﻿import type { EditorMode } from "../../types";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import { Bold, Italic, Heading, Code, List, Eye, Edit3 } from "lucide-react";
 
 interface Props {
@@ -11,37 +12,51 @@ export default function EditorToolbar({ mode, onModeChange, onInsert }: Props) {
   return (
     <div className="editor-toolbar">
       <div className="editor-toolbar-actions">
-        <button onClick={() => onInsert("**", "**")} title="Bold" className="toolbar-btn">
-          <Bold size={14} />
-        </button>
-        <button onClick={() => onInsert("*", "*")} title="Italic" className="toolbar-btn">
-          <Italic size={14} />
-        </button>
-        <button onClick={() => onInsert("## ", "")} title="Heading" className="toolbar-btn">
-          <Heading size={14} />
-        </button>
-        <button onClick={() => onInsert("- ", "")} title="List" className="toolbar-btn">
-          <List size={14} />
-        </button>
-        <button onClick={() => onInsert("```\n", "\n```")} title="Code block" className="toolbar-btn">
-          <Code size={14} />
-        </button>
+        <Tooltip label="Bold">
+          <ActionIcon variant="subtle" size="sm" onClick={() => onInsert("**", "**")}>
+            <Bold size={14} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Italic">
+          <ActionIcon variant="subtle" size="sm" onClick={() => onInsert("*", "*")}>
+            <Italic size={14} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Heading">
+          <ActionIcon variant="subtle" size="sm" onClick={() => onInsert("## ", "")}>
+            <Heading size={14} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="List">
+          <ActionIcon variant="subtle" size="sm" onClick={() => onInsert("- ", "")}>
+            <List size={14} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Code block">
+          <ActionIcon variant="subtle" size="sm" onClick={() => onInsert("```\n", "\n```")}>
+            <Code size={14} />
+          </ActionIcon>
+        </Tooltip>
       </div>
       <div className="editor-toolbar-modes">
-        <button
-          className={`toolbar-mode-btn ${mode === "edit" ? "active" : ""}`}
-          onClick={() => onModeChange("edit")}
-          title="Edit"
-        >
-          <Edit3 size={14} />
-        </button>
-        <button
-          className={`toolbar-mode-btn ${mode === "preview" ? "active" : ""}`}
-          onClick={() => onModeChange("preview")}
-          title="Preview"
-        >
-          <Eye size={14} />
-        </button>
+        <Tooltip label="Edit">
+          <ActionIcon
+            variant={mode === "edit" ? "filled" : "subtle"}
+            size="sm"
+            onClick={() => onModeChange("edit")}
+          >
+            <Edit3 size={14} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Preview">
+          <ActionIcon
+            variant={mode === "preview" ? "filled" : "subtle"}
+            size="sm"
+            onClick={() => onModeChange("preview")}
+          >
+            <Eye size={14} />
+          </ActionIcon>
+        </Tooltip>
       </div>
     </div>
   );

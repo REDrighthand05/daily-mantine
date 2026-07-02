@@ -1,3 +1,4 @@
+﻿import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { Palette } from "lucide-react";
 
 interface Props {
@@ -23,26 +24,28 @@ export default function ThemePicker({ accentColor, onChange }: Props) {
   };
 
   return (
-    <div className="theme-picker">
-      <div className="theme-picker-presets">
-        {PRESETS.map((color) => (
-          <button
-            key={color}
-            className={`theme-swatch ${accentColor === color ? "active" : ""}`}
-            style={{ backgroundColor: color }}
+    <Group gap={4}>
+      {PRESETS.map((color) => (
+        <Tooltip key={color} label={color}>
+          <ActionIcon
+            variant={accentColor === color ? "filled" : "subtle"}
+            style={{ backgroundColor: color, width: 28, height: 28, borderRadius: '50%' }}
             onClick={() => handleChange(color)}
             title={color}
           />
-        ))}
-      </div>
-      <label className="theme-picker-custom">
-        <Palette size={14} />
-        <input
-          type="color"
-          value={accentColor}
-          onChange={(e) => handleChange(e.target.value)}
-        />
-      </label>
-    </div>
+        </Tooltip>
+      ))}
+      <Tooltip label="Custom">
+        <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}>
+          <Palette size={14} />
+          <input
+            type="color"
+            value={accentColor}
+            onChange={(e) => handleChange(e.target.value)}
+            style={{ width: 0, height: 0, border: 'none', padding: 0, opacity: 0, position: 'absolute' }}
+          />
+        </label>
+      </Tooltip>
+    </Group>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import type { ClipboardEntry as CEntry } from "../../types";
 import ClipboardEntryComponent from "./ClipboardEntry";
 import ClipboardSearch from "./ClipboardSearch";
 import ClipboardDetail from "./ClipboardDetail";
+import { Button, Group, Text, Paper } from "@mantine/core";
 import { Trash2 } from "lucide-react";
 import { clipboardPoll } from "../../bridge/ipc";
 
@@ -59,19 +60,22 @@ export default function ClipboardList() {
   });
 
   return (
-    <div className="clipboard-panel">
-      <div className="clipboard-header">
-        <span className="clipboard-count">{filtered.length}</span>
-        <button
-          className="clipboard-clear-btn"
+    <Paper p="sm" withBorder style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Group justify="space-between" mb="xs">
+        <Text size="sm" c="dimmed">{filtered.length}</Text>
+        <Button
+          variant="subtle"
+          size="xs"
+          color="red"
           onClick={() => { if (confirm(t("clipboard.clearConfirm"))) clearClipboardHistory(); }}
           title="Clear history"
+          leftSection={<Trash2 size={12} />}
         >
-          <Trash2 size={12} /> Clear
-        </button>
-      </div>
+          Clear
+        </Button>
+      </Group>
       <ClipboardSearch />
-      <div className="clipboard-list" ref={parentRef}>
+      <div className="clipboard-list" ref={parentRef} style={{ flex: 1, overflow: 'auto', marginTop: 4 }}>
         <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
           {virtualizer.getVirtualItems().map((vItem) => {
             const entry = filtered[vItem.index];
@@ -79,7 +83,8 @@ export default function ClipboardList() {
               <div key={entry.id} style={{
                 position: 'absolute', top: 0, left: 0, width: '100%',
                 height: `${vItem.size}px`,
-                transform: `translateY(${vItem.start}px)`
+                transform: `translateY(${vItem.start}px)`,
+                padding: '2px 0'
               }}>
                 <ClipboardEntryComponent
                   entry={entry}
@@ -92,6 +97,6 @@ export default function ClipboardList() {
           })}
         </div>
       </div>
-    </div>
+    </Paper>
   );
 }

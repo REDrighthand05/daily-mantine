@@ -1,8 +1,8 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import type { ClipboardEntry as CEntry } from "../../types";
 import { Star, Trash2, Clipboard, ArrowLeft } from "lucide-react";
 import { writeClipboard } from "../../bridge/ipc";
-
+import { Button, ActionIcon, Paper, Text } from "@mantine/core";
 
 interface Props {
   entry: CEntry;
@@ -18,33 +18,32 @@ export default function ClipboardDetail({ entry, onBack, onDelete, onStar }: Pro
   };
 
   return (
-    <div className="cb-detail">
-      <div className="cb-detail-header">
-        <button className="cb-detail-btn" onClick={onBack}>
-          <ArrowLeft size={14} /> Back
-        </button>
-        <div className="cb-detail-actions">
-          <button className="cb-action-btn" onClick={handleCopy} title={t("clipboard.copy")}>
+    <Paper p="md" withBorder>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <Button variant="subtle" size="sm" onClick={onBack} leftSection={<ArrowLeft size={14} />}>
+          Back
+        </Button>
+        <div>
+          <ActionIcon variant="subtle" onClick={handleCopy} title={t("clipboard.copy")}>
             <Clipboard size={14} />
-          </button>
-          <button
-            className={`cb-action-btn ${entry.starred ? "starred" : ""}`}
+          </ActionIcon>
+          <ActionIcon
+            variant="subtle"
+            color={entry.starred ? "yellow" : "gray"}
             onClick={() => onStar(entry.id, !entry.starred)}
             title={entry.starred ? t("clipboard.unstar") : t("clipboard.star")}
           >
             <Star size={14} />
-          </button>
-          <button className="cb-action-btn" onClick={() => onDelete(entry.id)} title={t("common.delete")}>
+          </ActionIcon>
+          <ActionIcon variant="subtle" color="red" onClick={() => onDelete(entry.id)} title={t("common.delete")}>
             <Trash2 size={14} />
-          </button>
+          </ActionIcon>
         </div>
       </div>
-      <div className="cb-detail-content">
-        <pre className="cb-detail-text">{entry.content}</pre>
-      </div>
-      <div className="cb-detail-meta">
+      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', padding: 8, background: 'var(--mantine-color-dark-6)', borderRadius: 4, fontSize: 13 }}>{entry.content}</pre>
+      <Text c="dimmed" size="xs" mt="xs">
         {t("clipboard.contentType")}: {entry.content_type} | {new Date(entry.created_at).toLocaleString()}
-      </div>
-    </div>
+      </Text>
+    </Paper>
   );
 }
