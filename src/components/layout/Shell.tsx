@@ -1,4 +1,4 @@
-﻿import TitleBar from "./TitleBar";
+import TitleBar from "./TitleBar";
 import NoteList from "../notes/NoteList";
 import NoteEditor from "../notes/NoteEditor";
 import NoteSearch from "../notes/NoteSearch";
@@ -75,7 +75,7 @@ export default function Shell() {
           onClick={() => setActiveTab("notes")}
           leftSection={<FileText size={14} />}
         >
-          {t("tabs.notes")}
+          <span className="tab-label">{t("tabs.notes")}</span>
         </Button>
         <Button
           variant={activeTab === "clipboard" ? "light" : "subtle"}
@@ -83,7 +83,7 @@ export default function Shell() {
           onClick={() => setActiveTab("clipboard")}
           leftSection={<Clipboard size={14} />}
         >
-          {t("tabs.clipboard")}
+          <span className="tab-label">{t("tabs.clipboard")}</span>
         </Button>
         <Button
           variant={activeTab === "settings" ? "light" : "subtle"}
@@ -91,7 +91,7 @@ export default function Shell() {
           onClick={() => setActiveTab("settings")}
           leftSection={<Settings size={14} />}
         >
-          {t("tabs.settings")}
+          <span className="tab-label">{t("tabs.settings")}</span>
         </Button>
       </Paper>
     </div>
