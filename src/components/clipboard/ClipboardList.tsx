@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslation } from "react-i18next";
@@ -8,9 +8,9 @@ import type { ClipboardEntry as CEntry } from "../../types";
 import ClipboardEntryComponent from "./ClipboardEntry";
 import ClipboardSearch from "./ClipboardSearch";
 import ClipboardDetail from "./ClipboardDetail";
-import { Button, Group, Text, Paper } from "@mantine/core";
 import { Trash2 } from "lucide-react";
 import { clipboardPoll } from "../../bridge/ipc";
+import { Button } from "@heroui/react";
 
 export default function ClipboardList() {
   const { t } = useTranslation();
@@ -34,17 +34,7 @@ export default function ClipboardList() {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, []);
 
-  if (detailEntry) {
-    return (
-      <ClipboardDetail
-        entry={detailEntry}
-        onBack={() => setDetailEntry(null)}
-        onDelete={async (id) => { await deleteClipboardEntry(id); setDetailEntry(null); }}
-        onStar={(id, s) => starClipboardEntry(id, s)}
-      />
-    );
-  }
-
+  // Hooks MUST be before any conditional return (Rules of Hooks)
   const parentRef = useRef<HTMLDivElement>(null);
   const filtered = useMemo(() => clipboardSearchQuery
     ? clipboardEntries.filter((e) =>
@@ -59,23 +49,36 @@ export default function ClipboardList() {
     overscan: 5,
   });
 
+  // Now safe to conditionally return
+  if (detailEntry) {
+    return (
+      <ClipboardDetail
+        entry={detailEntry}
+        onBack={() => setDetailEntry(null)}
+        onDelete={async (id) => { await deleteClipboardEntry(id); setDetailEntry(null); }}
+        onStar={(id, s) => starClipboardEntry(id, s)}
+      />
+    );
+  }
+
   return (
-    <Paper p="sm" withBorder style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Group justify="space-between" mb="xs">
-        <Text size="sm" c="dimmed">{filtered.length}</Text>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between px-3 py-1.5 text-xs text-foreground-400 border-b border-divider">
+        <span className="text-[11px]">{filtered.length}</span>
         <Button
-          variant="subtle"
-          size="xs"
-          color="red"
+          size="sm"
+          variant="ghost"
+          color="danger"
+          className="h-6 min-w-0 text-xs px-2 gap-1"
+          startContent={<Trash2 size={12} />}
           onClick={() => { if (confirm(t("clipboard.clearConfirm"))) clearClipboardHistory(); }}
           title="Clear history"
-          leftSection={<Trash2 size={12} />}
         >
           Clear
         </Button>
-      </Group>
+      </div>
       <ClipboardSearch />
-      <div className="clipboard-list" ref={parentRef} style={{ flex: 1, overflow: 'auto', marginTop: 4 }}>
+      <div className="flex-1 overflow-y-auto" ref={parentRef}>
         <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
           {virtualizer.getVirtualItems().map((vItem) => {
             const entry = filtered[vItem.index];
@@ -83,8 +86,7 @@ export default function ClipboardList() {
               <div key={entry.id} style={{
                 position: 'absolute', top: 0, left: 0, width: '100%',
                 height: `${vItem.size}px`,
-                transform: `translateY(${vItem.start}px)`,
-                padding: '2px 0'
+                transform: `translateY(${vItem.start}px)`
               }}>
                 <ClipboardEntryComponent
                   entry={entry}
@@ -97,6 +99,6 @@ export default function ClipboardList() {
           })}
         </div>
       </div>
-    </Paper>
+    </div>
   );
 }
